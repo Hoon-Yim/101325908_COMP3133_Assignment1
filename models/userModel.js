@@ -17,4 +17,8 @@ const userSchema = mongoose.Schema({
     }
 });
 
+userSchema.methods.isPasswordCorrect = async function(givenPassword, userPassword) {
+    return givenPassword === userPassword;
+}
+
 module.exports = mongoose.model("User", userSchema);
