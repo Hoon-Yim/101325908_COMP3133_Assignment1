@@ -2,40 +2,34 @@ const express = require('express');
 const { graphqlHTTP } = require('express-graphql');
 const { buildSchema } = require('graphql');
 
+const app = express();
 const userController = require("./controllers/userController");
 
 const rootValue = {
-    signup: userController.signup
+    signup: userController.signup,
+    login: userController.login
 }
 
-/*
-const rootValue = {
-    hello: () => "Hello World",
-    course: args => {
-        const courseId = args.id;
-        return coursesData.filter(course => {
-            return course.id == courseId;
-        })[0]
-    }
-};
-*/ 
 const schema = buildSchema(`
+    type Query {
+        login(username: String!, password: String!): User
+    },
     type Mutation {
         signup(username: String!, email: String!, password: String!): User
-    }
+    },
     type User {
-        _id: Int
+        message: String
         username: String
         email: String
         password: String
-    }
+    },
     type Employee {
-        _id: Int
+        message: String
         firstname: String
         lastname: String
-        email String
+        email: String
         gender: String
-        salary: Number
+        salary: Float
     }
 `);
 
@@ -45,14 +39,14 @@ app.use('/graphql', graphqlHTTP({
   graphiql: true
 }));
 
-const AppError = require("./utils/appError");
-const globalErrorHandler = require("./controllers/errorController");
+// const AppError = require("./utils/appError");
+// const globalErrorHandler = require("./controllers/errorController");
 
-// Exception Handler for uncaught errors
-app.all('*', (req, res, next) => {
-    next(new AppError(`Can't find ${req.originalUrl} on this server..`, 404));
-});
-// Global Exception Handler
-app.use(globalErrorHandler);
+// // Exception Handler for uncaught errors
+// app.all('*', (req, res, next) => {
+//     next(new AppError(`Can't find ${req.originalUrl} on this server..`, 404));
+// });
+// // Global Exception Handler
+// app.use(globalErrorHandler);
 
 module.exports = app;
