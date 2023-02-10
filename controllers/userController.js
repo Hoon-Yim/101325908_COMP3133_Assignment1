@@ -8,6 +8,7 @@ exports.signup = async args => {
         email: args.email,
         password: args.password,
     }).catch(err => {
+        console.log(err);
         if (err.code === 11000) { // duplicate field error
             const duplicateValue = err.errmsg.match(/(["'])(?:(?=(\\?))\2.)*?\1/)[0];
             message = `Duplicate field value: ${duplicateValue}. Please use another value!`;
