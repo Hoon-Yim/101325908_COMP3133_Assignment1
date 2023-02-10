@@ -30,6 +30,7 @@ const schema = buildSchema(`
         password: String
     },
     type EmployeeObject {
+        id: String
         firstname: String
         lastname: String
         email: String
@@ -46,7 +47,7 @@ const schema = buildSchema(`
     },
     type Employees {
         message: String,
-        employees: [Employee]
+        employees: [EmployeeObject]
     }
 `);
 

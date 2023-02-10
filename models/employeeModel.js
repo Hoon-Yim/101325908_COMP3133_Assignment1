@@ -25,4 +25,11 @@ const employeeSchema = mongoose.Schema({
     }
 });
 
+employeeSchema.virtual('id').get(function () {
+  return this._id.toHexString();
+});
+
+employeeSchema.set('toObject', { virtuals: true });
+employeeSchema.set('toJSON', { virtuals: true });
+
 module.exports = mongoose.model("Employee", employeeSchema);
