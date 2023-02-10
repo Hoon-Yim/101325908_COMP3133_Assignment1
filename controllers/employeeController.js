@@ -33,12 +33,13 @@ exports.createEmployee = async args => {
         return new AppError(message);
     }
 
+    message = "Successfully created!";
     return {
-        message: "Successfully created!",
+        message,
         employee: newEmployee
     }
 }
 
 exports.searchEmployeeById = async args => {
-    
+
 }

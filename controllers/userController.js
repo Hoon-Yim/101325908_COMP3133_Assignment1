@@ -1,17 +1,31 @@
-// const catchAsync = require("../utils/catchAsync");
-const User = require("../models/userModel");
 const AppError = require("../utils/AppError");
+const User = require("../models/userModel");
 
 exports.signup = async args => {
+    let message = "";
     const newUser = await User.create({
         username: args.username,
         email: args.email,
         password: args.password,
+    }).catch(err => {
+        if (err.code === 11000) { // duplicate field error
+            const duplicateValue = err.errmsg.match(/(["'])(?:(?=(\\?))\2.)*?\1/)[0];
+            message = `Duplicate field value: ${duplicateValue}. Please use another value!`;
+        } else if (err.name === "ValidationError") {
+            const errors = Object.values(err.errors).map(el => el.message);
+            message = `Invalid input data. ${errors.join(". ")}`;
+        }
     });
 
-    console.log(newUser);
+    if (message !== "") {
+        return new AppError(message);
+    }
 
-    return newUser;
+    message = "Successfully created!";
+    return {
+        message,
+        user: newUser
+    };
 };
 
 exports.login = async args => {
@@ -20,8 +34,8 @@ exports.login = async args => {
         return new AppError("Username or Password is incorrect..");
     }
 
-    // adding a message
-    Object.assign(user, { message: "Successfully logged in!" })
-
-    return user;
+    return {
+        message: "Successfully logged in!",
+        user
+    }
 }

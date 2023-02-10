@@ -4,32 +4,49 @@ const { buildSchema } = require('graphql');
 
 const app = express();
 const userController = require("./controllers/userController");
+const employeeController = require("./controllers/employeeController");
 
 const rootValue = {
     signup: userController.signup,
-    login: userController.login
+    login: userController.login,
+    getAllEmployees: employeeController.getAllEmployees,
+    searchEmployeeById: employeeController.searchEmployeeById,
+    createEmployee: employeeController.createEmployee,
 }
 
 const schema = buildSchema(`
     type Query {
         login(username: String!, password: String!): User
+        getAllEmployees: Employees
+        searchEmployeeById(id: String): Employees
     },
     type Mutation {
         signup(username: String!, email: String!, password: String!): User
+        createEmployee(firstname: String!, lastname: String!, email: String!, gender: String, salary: Float!): Employee
     },
-    type User {
-        message: String
+    type UserObject {
         username: String
         email: String
         password: String
     },
-    type Employee {
-        message: String
+    type EmployeeObject {
         firstname: String
         lastname: String
         email: String
         gender: String
         salary: Float
+    },
+    type User {
+        message: String
+        user: UserObject
+    },
+    type Employee {
+        message: String
+        employee: EmployeeObject
+    },
+    type Employees {
+        message: String,
+        employees: [Employee]
     }
 `);
 
@@ -38,15 +55,5 @@ app.use('/graphql', graphqlHTTP({
   rootValue,
   graphiql: true
 }));
-
-// const AppError = require("./utils/appError");
-// const globalErrorHandler = require("./controllers/errorController");
-
-// // Exception Handler for uncaught errors
-// app.all('*', (req, res, next) => {
-//     next(new AppError(`Can't find ${req.originalUrl} on this server..`, 404));
-// });
-// // Global Exception Handler
-// app.use(globalErrorHandler);
 
 module.exports = app;
